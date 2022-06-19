@@ -68,14 +68,21 @@ class StudentServiceTest {
     }
 
     @Test
-    // @Disabled // disables a test
-    void deleteStudentTest() { // this is not completed
+    @Disabled // disables a test
+    void deleteStudentTest(){ // this is not completed
         // given
         Student student = new Student(1L, "Adrian", "adrianrg1996@gmail.com", Gender.MALE);
-        when(studentRepository.existsById(1L)).thenReturn(true);
+        given(studentRepository.existsById(student.getId())).willReturn(true);
+
+        // when
+        studentService.deleteStudent(student.getId());
 
         // then
-        studentService.deleteStudent(student.getId());
+        ArgumentCaptor<Student> studentArgumentCaptor = ArgumentCaptor.forClass(Student.class);
+        verify(studentRepository).delete(studentArgumentCaptor.capture());
+
+        Student capturedStudent = studentArgumentCaptor.getValue();
+        assertThat(capturedStudent).isEqualTo(student);
     }
 
 }
